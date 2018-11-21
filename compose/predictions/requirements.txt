@@ -4,3 +4,5 @@ requests
 gtfs-realtime-bindings
 geopy
 shapely
+redis
+rq
