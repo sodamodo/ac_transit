@@ -1,0 +1,33 @@
+version: '3.2'
+services:
+  locations:
+    build:
+      dockerfile: Dockerfile
+      context: ./locations
+    tty: true
+
+  rq-server:
+    build:
+      dockerfile: Dockerfile
+      context: ./rq-server
+    tty: true
+    
+  rq-worker:
+    build:
+      dockerfile: Dockerfile
+      context: ./rq-worker
+    tty: true
+    links:
+      - "rq-server"
+
+  predictions:
+    build:
+      dockerfile: Dockerfile
+      context: ./predictions
+    tty: true
+
+  # dashboard:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: ./dashboard
+  #   tty: true

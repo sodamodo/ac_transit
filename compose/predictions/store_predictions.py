@@ -9,7 +9,7 @@ from time import sleep
 from redis import Redis
 from rq import Queue
 from submit_prediction_data import process_prediction
-
+import logging
 
 
 def increment_token():
@@ -54,11 +54,14 @@ def loop():
     while (truth):
         try:
             predictions = []
-            # stop_list = stops
-            stop_list = get_stops_for_route(cur, stops, '72')
+            stop_list = stops
+            # stop_list = get_stops_for_route(cur, stops, '72')
             for stop in stop_list:
                 prediction_data = get_prediction_data(stop.stop_id)
+
                 q.enqueue(process_prediction, prediction_data)
+
+                # process_prediction(prediction_data)
                 print("queue up")
                 stop_index += 1
                 if (stop_index % 250 == 0):
@@ -71,6 +74,8 @@ def loop():
                 print(stop.stop_id)
             print("cycled!")
         except:
+            logging.exception("==========HIT THE EXCEPTION===========")
+
             sleep(60)
             loop()
 
@@ -116,5 +121,5 @@ if __name__ == '__main__':
         stops.append(stop)
 
     print("out of the loop")
-
+    logging.warning("==========GOING INTO THE LOOP===========")
     loop()

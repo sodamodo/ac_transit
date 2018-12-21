@@ -4,6 +4,7 @@ from google.transit import gtfs_realtime_pb2
 from database import get_cur
 from time import sleep, time
 from datetime import datetime
+import logging
 
 def loop():
     try:
@@ -67,9 +68,8 @@ def loop():
                     timestamp=datetime.fromtimestamp(timestamp[0]),
                     vehicle_id=vehicle_id
                 )
+                # logging.warning(sql_string)
                 # print(sql_string)
-
-
                 cur.execute(sql_string)
             sleep(30)
     except:
@@ -78,4 +78,5 @@ def loop():
 
 
 if __name__ == '__main__':
+    # logging.warning("ping?")
     loop()
