@@ -54,24 +54,24 @@ def loop():
     while (truth):
         try:
             predictions = []
-            stop_list = stops
-            # stop_list = get_stops_for_route(cur, stops, '72')
+            # stop_list = stops
+            stop_list = get_stops_for_route(cur, stops, '72')
             for stop in stop_list:
                 prediction_data = get_prediction_data(stop.stop_id)
 
-                q.enqueue(process_prediction, prediction_data)
+                # q.enqueue(process_prediction, prediction_data)
 
-                # process_prediction(prediction_data)
+                process_prediction(prediction_data)
                 print("queue up")
                 stop_index += 1
-                if (stop_index % 250 == 0):
-                    if token_index > 19:
-                        token_index = 0
-                    token = token_list[token_index]
-                    token_index += 1
-                if (stop_index == 5291):
-                    stop_index = 0
-                print(stop.stop_id)
+                # if (stop_index % 250 == 0):
+                #     if token_index > 19:
+                #         token_index = 0
+                #     token = token_list[token_index]
+                #     token_index += 1
+                # if (stop_index == 5291):
+                #     stop_index = 0
+                # print(stop.stop_id)
             print("cycled!")
         except:
             logging.exception("==========HIT THE EXCEPTION===========")
@@ -111,7 +111,7 @@ if __name__ == '__main__':
     token_index = 0
     base_url = "https://api.actransit.org/transit/stops/{}/predictions/?token=" + token
     cur = get_cur()
-
+    print("heloooo?")
     truth = True
     stops = []
     stops_file = open("stops.csv", "r")

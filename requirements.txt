@@ -6,3 +6,5 @@ geopy
 shapely
 redis==2.10.5
 rq==0.7.0
+google
+google-cloud-storage

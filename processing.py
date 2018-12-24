@@ -59,26 +59,29 @@ def get_closest_stop_on_route(vehicle):
 
     return stop_dist_dict
 
+def multiple_insert(insert_string):
+    cur.execute(insert_string)
+    multiple_insert_template_stirng = "INSERT INTO stoppedvehicles (id, trip_id, start_time, start_date, route_name, loc, bearing, speed, vehicle_timestamp) VALUES"
+    limiter = 0
+
+def check_if_stopped(vehicle):
+    pass
+
+def submit_bulk_sql(sql_string):
+    pass
 
 # Calls san pablo hour
 vehicles = populate_vehicles(cur)
 
-# Uses first bus point is 72R bus array to get all the 72R
-# stops out of the JSON list
-# stops_on_spr = get_stops_on_route(cur, vehicles[0], stops)
-# for stop in stops_on_spr:
 
-#     sql_string = """
-
-#         INSERT INTO sanpablorapidstops (SELECT * FROM stops WHERE stop_id={})
-#     """.format(stop.stop_id)
-#     cur.execute(sql_string)
+multiple_insert_template_stirng = "INSERT INTO stoppedvehicles (id, trip_id, start_time, start_date, route_name, stop_id, loc, bearing, speed, vehicle_timestamp, vehicle_id) VALUES"
 
 
-
+limiter = 0
+counter = 0
 for vehicle in vehicles:
-    
-    if vehicle.speed == 0:
+    print("stop check called!")
+    if vehicle.speed == "0.0":
         stop_dist_dict = get_closest_stop_on_route(vehicle)
         # closest_stop is stop_id and closest_stop[1] is distance
         # if stop_dist_dict.items() == {}:
@@ -90,13 +93,14 @@ for vehicle in vehicles:
         # print("closest stop....", closest_stop)
         stop_id = closest_stop[0]
         if closest_stop[1] < 25:
-            # print("vehicle timestmap?", vehicle.vehicle_id)
-            # print("python datatype for timestamp field", type(vehicle.timestamp))
-            sql_string = """
-            INSERT INTO stoppedvehicles VALUES('{id}', '{trip_id}', '{start_time}', '{start_date}',
-                                        '{route_id}', {stop_id}, '{loc}', 
-                                        '{bearing}', '{speed}', '{timestamp}', '{vehicle_id}')
 
+            print("vehicle timestmap?", vehicle.vehicle_id)
+            print("python datatype for timestamp field", type(vehicle.timestamp))
+
+            sql_bulk_insert = """
+             ('{id}', '{trip_id}', '{start_time}', '{start_date}',
+                                        '{route_id}', {stop_id}, '{loc}', 
+                                        '{bearing}', '{speed}', '{timestamp}', '{vehicle_id}'),
             """.format(
                 id=vehicle.id,
                 trip_id=vehicle.trip_id,
@@ -110,17 +114,91 @@ for vehicle in vehicles:
                 timestamp=vehicle.timestamp,
                 vehicle_id=vehicle.vehicle_id
             )
-            # print(sql_string)
-            cur.execute(sql_string)
-            # print("unpack closest stop", closest_stop)
-            # print("stop dict", stop_dist_dict)
-            # print("closest stop", closest_stop)
+            print(counter)
+            counter += 1
+            multiple_insert_template_stirng += sql_bulk_insert
+    
+    limiter += 1
+    if limiter > 800:
+        multiple_insert_template_stirng = multiple_insert_template_stirng[:-14] + ';'
+        multiple_insert_template_stirng = multiple_insert_template_stirng.replace("None", "")
+        print("the increasing big bulk import statement....")
+        print(multiple_insert_template_stirng)
+        cur.execute(multiple_insert_template_stirng)
+        multiple_insert_template_stirng = "INSERT INTO stoppedvehicles (id, trip_id, start_time, start_date, route_name, stop_id, loc, bearing, speed, vehicle_timestamp, vehicle_id) VALUES"
+        limiter = 0
 
-        else:
-            # print("need moar data")
-            continue
 
-print("fin!")
+
+    # if vehicle.speed == "0.0":
+    #     stop_dist_dict = get_closest_stop_on_route(vehicle)
+    #     # closest_stop is stop_id and closest_stop[1] is distance
+    #     # if stop_dist_dict.items() == {}:
+    #     #     continue
+
+    #     if len(stop_dist_dict[vehicle].items()) == 0:
+    #         continue
+    #     closest_stop = min(stop_dist_dict[vehicle].items(), key=lambda kv: kv[1])
+    #     # print("closest stop....", closest_stop)
+    #     stop_id = closest_stop[0]
+    #     if closest_stop[1] < 25:
+
+    #         print("vehicle timestmap?", vehicle.vehicle_id)
+    #         print("python datatype for timestamp field", type(vehicle.timestamp))
+
+    #         sql_bulk_insert = """
+    #          ('{id}', '{trip_id}', '{start_time}', '{start_date}',
+    #                                     '{route_id}', {stop_id}, '{loc}', 
+    #                                     '{bearing}', '{speed}', '{timestamp}', '{vehicle_id}'),
+
+    #         """.format(
+    #             id=vehicle.id,
+    #             trip_id=vehicle.trip_id,
+    #             start_time=vehicle.start_time,
+    #             start_date=vehicle.start_date,
+    #             route_id=vehicle.route_id,
+    #             stop_id=stop_id,
+    #             loc=vehicle.loc,
+    #             bearing=vehicle.bearing,
+    #             speed=vehicle.speed,
+    #             timestamp=vehicle.timestamp,
+    #             vehicle_id=vehicle.vehicle_id
+    #         )
+            
+    #         multiple_insert_template_stirng = multiple_insert_template_stirng + sql_bulk_insert
+    #         # sql_string = """
+    #         # INSERT INTO stoppedvehicles VALUES('{id}', '{trip_id}', '{start_time}', '{start_date}',
+    #         #                             '{route_id}', {stop_id}, '{loc}', 
+    #         #                             '{bearing}', '{speed}', '{timestamp}', '{vehicle_id}')
+
+    #         # """.format(
+    #         #     id=vehicle.id,
+    #         #     trip_id=vehicle.trip_id,
+    #         #     start_time=vehicle.start_time,
+    #         #     start_date=vehicle.start_date,
+    #         #     route_id=vehicle.route_id,
+    #         #     stop_id=stop_id,
+    #         #     loc=vehicle.loc,
+    #         #     bearing=vehicle.bearing,
+    #         #     speed=vehicle.speed,
+    #         #     timestamp=vehicle.timestamp,
+    #         #     vehicle_id=vehicle.vehicle_id
+    #         # )
+    #         # print(sql_string)
+            
+    #         # cur.execute(sql_string)
+    #         # print("unpack closest stop", closest_stop)
+    #         # print("stop dict", stop_dist_dict)
+    #         # print("closest stop", closest_stop)
+            
+    #     else:
+    #         print("need moar data")
+    #         continue
+    #     if limiter > 10:
+    #         break
+    #     limiter += 1
+# multiple_insert_template_stirng = multiple_insert_template_stirng[:-1] + ';'
+
 
 # vehicle_map = {}
 # for vehicle in vehicles:
@@ -140,4 +218,16 @@ print("fin!")
 
 
 
+# print("these are the vehicles", vehicles)
+
+# Uses first bus point is 72R bus array to get all the 72R
+# stops out of the JSON list
+# stops_on_spr = get_stops_on_route(cur, vehicles[0], stops)
+# for stop in stops_on_spr:
+
+#     sql_string = """
+
+#         INSERT INTO sanpablorapidstops (SELECT * FROM stops WHERE stop_id={})
+#     """.format(stop.stop_id)
+#     cur.execute(sql_string)
 

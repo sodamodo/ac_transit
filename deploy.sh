@@ -8,9 +8,9 @@ gcloud config set compute/zone us-central1-a
 # docker tag gcr.io/sustained-fx-221520/locations:v3 gcr.io/sustained-fx-221520/locations:latest
 # gcloud docker -- push gcr.io/sustained-fx-221520/locations:v3
 
-docker build --tag gcr.io/sustained-fx-221520/predictions:v7 compose/predictions/
-docker tag gcr.io/sustained-fx-221520/predictions:v7 gcr.io/sustained-fx-221520/predictions:latest
-gcloud docker -- push gcr.io/sustained-fx-221520/predictions:v7
+docker build --tag gcr.io/sustained-fx-221520/predictions:v8 compose/predictions/
+docker tag gcr.io/sustained-fx-221520/predictions:v8 gcr.io/sustained-fx-221520/predictions:latest
+gcloud docker -- push gcr.io/sustained-fx-221520/predictions:v8
 
 
 # docker build --tag gcr.io/sustained-fx-221520/rq-worker:v3 compose/rq-worker/

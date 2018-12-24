@@ -1,0 +1,69 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  creationTimestamp: 2018-12-21T21:51:33Z
+  generation: 2
+  labels:
+    app: transit
+  name: transit
+  namespace: default
+  resourceVersion: "768845"
+  selfLink: /apis/extensions/v1beta1/namespaces/default/deployments/transit
+  uid: 94cbceca-056a-11e9-b668-42010a80005b
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: transit
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: transit
+    spec:
+      containers:
+      - image: gcr.io/ac-transit-224721/locations:v1
+        imagePullPolicy: IfNotPresent
+        name: locations
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      - image: gcr.io/ac-transit-224721/predictions:v2
+        imagePullPolicy: IfNotPresent
+        name: predictions
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: 2018-12-21T21:51:35Z
+    lastUpdateTime: 2018-12-21T21:51:35Z
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: 2018-12-21T21:51:33Z
+    lastUpdateTime: 2018-12-21T21:51:36Z
+    message: ReplicaSet "transit-7b7dff4b6" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 2
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

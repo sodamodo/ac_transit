@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "ac-transit-224721",
+  "private_key_id": "f32b66bc7da60eaadc04b8fef4c51f9843f7cef5",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDNHZZbs1U9eDLz\nU3j+DiXwDAFTzokmZ5lrBDfKLumm9uj65vlTZ0bVmFs9UnHvQR4UgPScjr27QIvt\nkQgSUBZXN472sCmXggaITXLJbnbl9EntbKZ5OUyB1zmZHJhQ+c6nI7QrjQibXxLX\ns2OcfMQKRUqyTqKJF6eq4YJvD+XRsr/z/dOlUnvFcqHAPAWvf+01uliFaFVlGmsE\nEXNlKu/SDi5lyyJv0nFfX8Fw8WSy60uhJ6ppQi3KUu9ORXBbZhpU0wvWeCunKU4J\nrou6R/80AugultyigIgRGEVo843DAXNIaWqQAtiWFgApm8t2BqvdbYg5gOwgZL03\nxQ47SbctAgMBAAECggEAAbxpCV2l2wn+ubslywCo/DRzI8JxEWIkakN0NWyFjbmJ\nP0EKhdTZ70owJioMd3nq8ewley26GAZJKOQ8ApZVmhII+Q2Eoe5NH9oynoHQ1SFm\n1BuXTRoEYRTxPS/WGi6tu7xm9KISRekIFSCaNzjXGpR7jVwdBAwEie20AjygNVDK\nE3tzJCWlMDcvZj64UM9BoB21l4rI1MoIKN/LhJ7NLMubiJENOc+g1JqEe6P8D4Pd\nRDsHix1VSCUhug73qzGARRcHFg1m3IAiB7kQa+3dKtNRd7/+MEMzMdhr6CSlKzPZ\n/gjiM7vEY7c9NGkh2qSW0rDoT0wVsWf0yQVUWB3gAQKBgQD+G69BASJwpTvq6Ve0\nI3RBXi9ZZCm/X4dCdvlYcfAI+C5qM4SRpkY4/xJ2t2EQqtUYsnDZhbrfCpa8Jk9l\n9UwqGclAFCnMmhRGZxupTNBIIPj37k0XcOLIc/5pefjh+4SGQYF6U5AajdDjjVpp\nGsiHVxiCbfYu9Zw0iXbcX7N2fQKBgQDOpIaXwCHjf20Lt8KFdNvHNWNwZf5p6S0u\nmDEnrneck1vsHbKpT+w7WJpUMLuLCB8RqGx1cAwMOHekwre0enwIQ/pUfcXzGJ+N\n2v3lC8wh1Ua56XXMdeX/vx/R06XCANz9Yx37pMUlp9N0xaNqdc6yZTnKn6rltbbo\nOt4uHQYycQKBgQCA7MTvY0b5BiyvVDLGV9KtM78sSJCR40L6Kuj5wd06f8j04yyY\nxVcNpgTVLNdXoIU74ZU2GA6nCXVPAtT38wvwtGKSW2iVwXsV+Uxkim+GmQwYptSA\nVysI7ykelN78sSMdBvFNgkYz4s4gFeDQQOGLIVpzGp10V/MoCLLAvuGL9QKBgDI/\nT3sW/SaUla+Dv4k0IT0Pfl6WbobSbGooF8vOYMdyDagckJUbGhZUNTLDptbn4qYo\njjcAR+2wzWcC8iiwn/hijzx8WOYD1shnt9U6SSjw84HBgyN0h7jogJRFIslJ7HKw\n51mJd2bwqDp81H/OpbQ7aRIcQTIaPZ+6sMwFwrwBAoGAVKVZbhpz86jZCUSyOs1H\nerQGrIpzS11HCvU7OuIGEa0APidG/IeTjS9ATAr4Llr5fGlMr17giZM2eX9xKcvt\nxCObwgumcH/5wVYySFpsy5SLFk63C5ouIWA+BztFe5pV3xLwsT6kaZs28qFvE7i/\ngkFWUmhoCVHDg5wrd4KQMsE=\n-----END PRIVATE KEY-----\n",
+  "client_email": "bucketcreator@ac-transit-224721.iam.gserviceaccount.com",
+  "client_id": "105686723054576842670",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/bucketcreator%40ac-transit-224721.iam.gserviceaccount.com"
+}
