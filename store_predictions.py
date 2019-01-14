@@ -76,7 +76,7 @@ def loop():
                 # print(stop.stop_id)
             print("cycled!")
         except:
-            sleep(.5)
+            # sleep(.5)
             loop()
 
 if __name__ == '__main__':
