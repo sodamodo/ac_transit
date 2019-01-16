@@ -8,8 +8,9 @@ from ast import literal_eval
 from time import sleep
 from redis import Redis
 from rq import Queue
+import threading
 from submit_prediction_data import process_prediction
-import logging
+
 
 
 def increment_token():
@@ -54,35 +55,34 @@ def loop():
     while (truth):
         try:
             predictions = []
-            # stop_list = stops
-            stop_list = get_stops_for_route(cur, stops, '72')
+            stop_list = stops
+            # stop_list = get_stops_for_route(cur, stops, '72')
             for stop in stop_list:
                 prediction_data = get_prediction_data(stop.stop_id)
+                # print("weird prediction data??? ", prediction_data)
 
                 # q.enqueue(process_prediction, prediction_data)
-
-                process_prediction(prediction_data)
-                print("queue up")
+                # process_prediction(prediction_data)
+                t = threading.Thread(target=process_prediction, args=(prediction_data,))
+                t.start()
                 stop_index += 1
-                # if (stop_index % 250 == 0):
-                #     if token_index > 19:
-                #         token_index = 0
-                #     token = token_list[token_index]
-                #     token_index += 1
-                # if (stop_index == 5291):
-                #     stop_index = 0
+                if (stop_index % 250 == 0):
+                    if token_index > 19:
+                        token_index = 0
+                    token = token_list[token_index]
+                    token_index += 1
+                if (stop_index == 5291):
+                    stop_index = 0
                 # print(stop.stop_id)
             print("cycled!")
         except:
-            logging.exception("==========HIT THE EXCEPTION===========")
-
-            sleep(60)
+            # sleep(.5)
             loop()
 
 if __name__ == '__main__':
 
-    q = Queue(connection=Redis(host="redis-17312.c99.us-east-1-4.ec2.cloud.redislabs.com", port=17312, password="transit"))
-    q.empty()
+    # q = Queue(connection=Redis(host="redis-17312.c99.us-east-1-4.ec2.cloud.redislabs.com", port=17312, password="transit"))
+    # q.empty()
     token_list = [
         '9A9392AEE88125369B928F281DBD341B',
         '59D69D98A213F47907DCC4666C429F97',
@@ -111,7 +111,7 @@ if __name__ == '__main__':
     token_index = 0
     base_url = "https://api.actransit.org/transit/stops/{}/predictions/?token=" + token
     cur = get_cur()
-    print("heloooo?")
+
     truth = True
     stops = []
     stops_file = open("stops.csv", "r")
@@ -121,5 +121,5 @@ if __name__ == '__main__':
         stops.append(stop)
 
     print("out of the loop")
-    logging.warning("==========GOING INTO THE LOOP===========")
+
     loop()
