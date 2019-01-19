@@ -1,0 +1,26 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose --file docker-compose.yaml convert
+    kompose.version: 1.17.0 (a74acad)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: locations
+  name: locations
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: locations
+    spec:
+      containers:
+      - image: gcr.io/ac-transit-229019/locations:v2
+        name: locations
+        resources: {}
+        tty: true
+      restartPolicy: Always
+status: {}

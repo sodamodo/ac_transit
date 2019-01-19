@@ -8,9 +8,9 @@ from ast import literal_eval
 from time import sleep
 from redis import Redis
 from rq import Queue
-import threading
 from submit_prediction_data import process_prediction
-
+import logging
+import random
 
 
 def increment_token():
@@ -52,27 +52,36 @@ def get_stops_for_route(cur, stops, route):
 
 def loop():
     stop_index = 0
+    logging.warning("about tot ry")
     while (truth):
         try:
+            logging.warning("Made it to try block of loops")
             predictions = []
             stop_list = stops
-            # stop_list = get_stops_for_route(cur, stops, '72')
-            for stop in stop_list:
-                prediction_data = get_prediction_data(stop.stop_id)
-                # print("weird prediction data??? ", prediction_data)
+            stop = random.choice(stop_list)
+            prediction_data = get_prediction_data(stop.stop_id)
+            logging.warning("process to be enqueued")
+            q.enqueue(process_prediction, prediction_data)
+            logging.warning("============LENGTH OF QUEUE====")
+            logging.warning(len(q))
 
-                # q.enqueue(process_prediction, prediction_data)
-                # process_prediction(prediction_data)
-                t = threading.Thread(target=process_prediction, args=(prediction_data,))
-                t.start()
-                stop_index += 1
-                if (stop_index % 250 == 0):
-                    if token_index > 19:
-                        token_index = 0
-                    token = token_list[token_index]
-                    token_index += 1
-                if (stop_index == 5291):
-                    stop_index = 0
+
+            # stop_list = get_stops_for_route(cur, stops, '72')
+            # for stop in stop_list:
+            #     prediction_data = get_prediction_data(stop.stop_id)
+            #     logging.warning("process to be enqueued")
+            #     q.enqueue(process_prediction, prediction_data)
+            #     logging.warning("============LENGTH OF QUEUE====")
+            #     logging.warning(len(q))
+
+            stop_index += 1
+            if (stop_index % 250 == 0):
+                if token_index > 19:
+                    token_index = 0
+                token = token_list[token_index]
+                token_index += 1
+            if (stop_index == 5291):
+                stop_index = 0
                 # print(stop.stop_id)
             print("cycled!")
         except:
@@ -80,9 +89,11 @@ def loop():
             loop()
 
 if __name__ == '__main__':
-
-    # q = Queue(connection=Redis(host="redis-17312.c99.us-east-1-4.ec2.cloud.redislabs.com", port=17312, password="transit"))
-    # q.empty()
+    logging.warning("sleeeeping")
+    print("Joia")
+    sleep(5)
+    q = Queue(connection=Redis(host="redis", port=6379))
+    q.empty()
     token_list = [
         '9A9392AEE88125369B928F281DBD341B',
         '59D69D98A213F47907DCC4666C429F97',

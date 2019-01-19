@@ -1,0 +1,26 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose --file docker-compose.yaml convert
+    kompose.version: 1.17.0 (a74acad)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: rq-server
+  name: rq-server
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: rq-server
+    spec:
+      containers:
+      - image: gcr.io/ac-transit-229019/rq-server:v1
+        name: rq-server
+        resources: {}
+        tty: true
+      restartPolicy: Always
+status: {}
