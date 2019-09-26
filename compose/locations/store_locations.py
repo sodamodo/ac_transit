@@ -34,6 +34,7 @@ def loop():
                     speed=None
                 timestamp=entity.vehicle.timestamp,
                 vehicle_id=entity.vehicle.vehicle.id
+                print("entity.... ", entity)
                 # print("vehicle id.... ", vehicle_id)
                 # print("timestamp feed time and timestamp...", type(timestamp), timestamp)
                 ts = time()
@@ -41,25 +42,23 @@ def loop():
                 # string_feed_ts = datetime.fromtimestamp(timestamp[0]).strftime('%Y-%m-%d %H:%M:%S')
                 string_ts = datetime.fromtimestamp(ts)
                 string_feed_ts = datetime.fromtimestamp(timestamp[0])
-                delta = string_ts - string_feed_ts 
+                delta = string_ts - string_feed_ts
                 if delta.days > 0:
                     print("bad data", delta)
                     continue
                 # print("python today timestamp", string_ts)
                 # print("feed today timestamp", string_feed_ts)
-                
-                
+
+
                 # print("Output timestamp....", datetime.fromtimestamp(timestamp[0]))
                 sql_string = """
-                INSERT INTO vehicles VALUES('{id}', '{trip_id}', '{start_time}', '{start_date}',
-                                            '{route_id}', ST_GeomFromText('POINT({lon} {lat})', 4326), 
-                                            '{bearing}', '{speed}', '{timestamp}', {vehicle_id});
+                INSERT INTO vehicles VALUES('{id}', '{trip_id}',
+                                            '{route_id}', ST_GeomFromText('POINT({lon} {lat})', 4326),
+                                            '{bearing}', '{speed}', '{timestamp}', '{vehicle_id}');
 
                 """.format(
                     id=id,
                     trip_id=trip_id[0],
-                    start_time=start_time[0],
-                    start_date=start_date[0],
                     route_id=route_id[0],
                     lon=lon[0],
                     lat=lat[0],
@@ -68,9 +67,12 @@ def loop():
                     timestamp=datetime.fromtimestamp(timestamp[0]),
                     vehicle_id=vehicle_id
                 )
-                # logging.warning(sql_string)
+                logging.warning(sql_string)
                 # print(sql_string)
-                cur.execute(sql_string)
+                try:
+                    cur.execute(sql_string)
+                except:
+                    logging.warning("Insertion error")
             sleep(30)
     except:
         sleep(60)
@@ -79,4 +81,5 @@ def loop():
 
 if __name__ == '__main__':
     # logging.warning("ping?")
+    print("ziiiing")
     loop()

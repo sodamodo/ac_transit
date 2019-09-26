@@ -6,36 +6,36 @@ services:
       context: ./locations
     tty: true
 
-  rq-server:
-    build:
-      dockerfile: Dockerfile
-      context: ./rq-server
-    tty: true
-
-  rq-worker:
-    build:
-      dockerfile: Dockerfile
-      context: ./rq-worker
-    tty: true
-    links:
-      - "rq-server"
-      - "redis"
-
-  predictions:
-    build:
-      dockerfile: Dockerfile
-      context: ./predictions
-    tty: true
-    links:
-      - "redis"
-
-  redis:
-    image: redis
-    ports:
-      - "6380"
-
-  dashboard:
-    build:
-      dockerfile: Dockerfile
-      context: ./dashboard
-    tty: true
+  # rq-server:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: ./rq-server
+  #   tty: true
+  #
+  # rq-worker:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: ./rq-worker
+  #   tty: true
+  #   links:
+  #     - "rq-server"
+  #     - "redis"
+  #
+  # predictions:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: ./predictions
+  #   tty: true
+  #   links:
+  #     - "redis"
+  #
+  # redis:
+  #   image: redis
+  #   ports:
+  #     - "6380"
+  #
+  # dashboard:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: ./dashboard
+  #   tty: true

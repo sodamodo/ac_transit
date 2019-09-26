@@ -5,7 +5,7 @@
 import psycopg2
 
 def get_cur():
-    conn = psycopg2.connect(dbname="bp", user="postgres", password="transit", host="35.224.158.32")
+    conn = psycopg2.connect(dbname="bus", user="postgres", password="password", host="107.178.209.119")
     conn.autocommit = True
     cur = conn.cursor()
     return cur
