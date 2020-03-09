@@ -1,9 +1,0 @@
-psycopg2
-sqlalchemy
-requests
-gtfs-realtime-bindings
-geopy
-shapely
-redis
-rq
-pytz

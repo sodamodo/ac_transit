@@ -31,13 +31,13 @@ spec:
         app: transit
     spec:
       containers:
-      - image: gcr.io/ac-transit-229019/locations:v1
+      - image: gcr.io/luckydogagilityg/locations:v1
         imagePullPolicy: IfNotPresent
         name: locations
         resources: {}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
-      - image: gcr.io/ac-transit-229019/predictions:v2
+      - image: gcr.io/luckydogagilityg/predictions:v1
         imagePullPolicy: IfNotPresent
         name: predictions
         resources: {}
