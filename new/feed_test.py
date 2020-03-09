@@ -21,10 +21,13 @@ for entity in feed.entity:
     # id=entity.vehicle.id
     print("ID... ", entity.vehicle)
 
-    # trip_id=entity.vehicle.trip_id
-    # print("tripid.. ", trip_id)
+    trip_id=entity.vehicle.trip_id
+    print("tripid.. ", trip_id)
 
-    # schedule_relationship = entity.vehicle.schedule_relationship
-    # print("schedule relationship,... ", schedule_relationship)
+    schedule_relationship = entity.vehicle.schedule_relationship
+    print("schedule relationship,... ", schedule_relationship)
+
+    route_id = entity.vehicle.route_id
+    print("schedule relationship,... ", route_id)
 
     break
