@@ -4,6 +4,7 @@
 # from sqlalchemy import create_engine
 import psycopg2
 
+
 def get_cur():
     conn = psycopg2.connect(dbname="gis", user="zack", password="password", host="0.0.0.0")
     conn.autocommit = True
