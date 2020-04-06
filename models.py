@@ -4,14 +4,16 @@ class Vehicle:
     def __init__(self, vehicle_array):
         self.id = vehicle_array[0]
         self.trip_id = vehicle_array[1]
-        self.start_time = vehicle_array[2]
-        self.start_date = vehicle_array[3]
-        self.route_id = vehicle_array[4]
-        self.loc = vehicle_array[5]
-        self.bearing = vehicle_array[6]
-        self.speed = vehicle_array[7]
-        self.vehicle_id = vehicle_array[9]
-        self.timestamp =vehicle_array[8]
+        # self.start_time = vehicle_array[2]
+        # self.start_date = vehicle_array[3]
+        self.route_id = vehicle_array[2]
+        self.loc = vehicle_array[3]
+        self.bearing = vehicle_array[4]
+        self.speed = vehicle_array[5]
+        self.timestamp =vehicle_array[6]
+        self.vehicle_id = vehicle_array[7]
+        self.x =vehicle_array[8]
+        self.y =vehicle_array[9]
 
 
 class Stop:

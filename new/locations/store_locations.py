@@ -67,6 +67,7 @@ def loop():
                     timestamp=datetime.fromtimestamp(timestamp[0]),
                     vehicle_id=vehicle_id
                 )
+                
                 logging.warning(sql_string)
                 # print(sql_string)
                 try:

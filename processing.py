@@ -2,7 +2,7 @@ import requests
 import psycopg2
 from google.transit import gtfs_realtime_pb2
 from models import Stop, Vehicle
-from database import get_cur
+# from database import get_cur
 import re
 import json
 import csv
@@ -10,7 +10,19 @@ from collections import defaultdict
 from geopy.distance import vincenty
 from shapely import wkb
 
-cur = get_cur()
+
+def get_conn():
+    conn = psycopg2.connect(dbname="postgres", user="zack", password="password", host="database-1.c3ohfvdvxlpf.us-east-2.rds.amazonaws.com")
+    conn.autocommit = False
+    return conn
+
+
+conn = get_conn()
+cur = conn.cursor("my_cursor")
+
+cur.execute("SELECT * FROM vehicles ORDER BY vehicle_id, vehicle_timestamp")
+vehicles = cur.fetchmany(5000)
+
 
 stops = []
 stops_file = open("stops.csv", "r")
@@ -80,40 +92,40 @@ multiple_insert_template_stirng = "INSERT INTO stoppedvehicles (id, trip_id, sta
 limiter = 0
 counter = 0
 for vehicle in vehicles:
-    # print("stop check called!")
-    # if vehicle.speed == "0.0":
-    #     stop_dist_dict = get_closest_stop_on_route(vehicle)
-    #
-    #     if len(stop_dist_dict[vehicle].items()) == 0:
-    #         continue
-    #     closest_stop = min(stop_dist_dict[vehicle].items(), key=lambda kv: kv[1])
-    #     # print("closest stop....", closest_stop)
-    #     stop_id = closest_stop[0]
-    #     if closest_stop[1] < 25:
-    #
-    #         print("vehicle timestmap?", vehicle.vehicle_id)
-    #         print("python datatype for timestamp field", type(vehicle.timestamp))
-    #
-    #         sql_bulk_insert = """
-    #          ('{id}', '{trip_id}', '{start_time}', '{start_date}',
-    #                                     '{route_id}', {stop_id}, '{loc}',
-    #                                     '{bearing}', '{speed}', '{timestamp}', '{vehicle_id}'),
-    #         """.format(
-    #             id=vehicle.id,
-    #             trip_id=vehicle.trip_id,
-    #             start_time=vehicle.start_time,
-    #             start_date=vehicle.start_date,
-    #             route_id=vehicle.route_id,
-    #             stop_id=stop_id,
-    #             loc=vehicle.loc,
-    #             bearing=vehicle.bearing,
-    #             speed=vehicle.speed,
-    #             timestamp=vehicle.timestamp,
-    #             vehicle_id=vehicle.vehicle_id
-    #         )
-    #         print(counter)
-    #         counter += 1
-    #         multiple_insert_template_stirng += sql_bulk_insert
+    print("stop check called!")
+    if vehicle.speed == "0.0":
+        stop_dist_dict = get_closest_stop_on_route(vehicle)
+    
+        if len(stop_dist_dict[vehicle].items()) == 0:
+            continue
+        closest_stop = min(stop_dist_dict[vehicle].items(), key=lambda kv: kv[1])
+        # print("closest stop....", closest_stop)
+        stop_id = closest_stop[0]
+        if closest_stop[1] < 25:
+    
+            print("vehicle timestmap?", vehicle.vehicle_id)
+            print("python datatype for timestamp field", type(vehicle.timestamp))
+    
+            sql_bulk_insert = """
+             ('{id}', '{trip_id}', '{start_time}', '{start_date}',
+                                        '{route_id}', {stop_id}, '{loc}',
+                                        '{bearing}', '{speed}', '{timestamp}', '{vehicle_id}'),
+            """.format(
+                id=vehicle.id,
+                trip_id=vehicle.trip_id,
+                start_time=vehicle.start_time,
+                start_date=vehicle.start_date,
+                route_id=vehicle.route_id,
+                stop_id=stop_id,
+                loc=vehicle.loc,
+                bearing=vehicle.bearing,
+                speed=vehicle.speed,
+                timestamp=vehicle.timestamp,
+                vehicle_id=vehicle.vehicle_id
+            )
+            print(counter)
+            counter += 1
+            multiple_insert_template_stirng += sql_bulk_insert
 
 
     sql_bulk_insert = """

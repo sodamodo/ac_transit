@@ -18,19 +18,17 @@ def process_prediction(prediction_data):
     logging.warning("=======ARE YOU EVEN WORKING??=====")
     cur = get_cur()
     predictions = []
-    if prediction_data == None:
-        pass
-    else:
-        if type(prediction_data == list):
+    if prediction_data is not None:
+        if type(prediction_data) == list:
             try:
                 for prediction in prediction_data:
                     # # print("type of prediction list...", type(prediction))
                     predictions.append(Prediction(prediction))
-            except:
-                pass
+            except Exeption as e:
+                print(str(e))
 
 
-    bulk_template = "INSERT INTO predictions (stop_id, trip_id, vehicle_id, route_name, predicted_delay, predicted_departure, prediction_datetime ) VALUES"
+    # bulk_template = "INSERT INTO predictions (stop_id, trip_id, vehicle_id, route_name, predicted_delay, predicted_departure, prediction_datetime ) VALUES"
     # print("OG bs len", len(bulk_template))
 
     # print("HOW MANYT PREDS???", len(predictions))
