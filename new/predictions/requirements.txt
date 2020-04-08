@@ -7,3 +7,4 @@ shapely
 redis
 rq
 pytz
+huey 

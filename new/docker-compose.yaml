@@ -27,8 +27,8 @@ services:
       context: ./predictions
     tty: true
     links:
-      - "rq-server"
       - "redis"  
+      - "rq-worker"
   
   redis:
     image: redis
@@ -42,10 +42,10 @@ services:
   #   tty: true
 
 
-  locations:
-    build:
-      dockerfile: Dockerfile
-      context: ./locations
-    tty: true
+  # locations:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: ./locations
+  #   tty: true
 
 

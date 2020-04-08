@@ -35,22 +35,15 @@ def loop():
                 timestamp=entity.vehicle.timestamp,
                 vehicle_id=entity.vehicle.vehicle.id
                 print("entity.... ", entity)
-                # print("vehicle id.... ", vehicle_id)
-                # print("timestamp feed time and timestamp...", type(timestamp), timestamp)
+
                 ts = time()
-                # string_ts = datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-                # string_feed_ts = datetime.fromtimestamp(timestamp[0]).strftime('%Y-%m-%d %H:%M:%S')
                 string_ts = datetime.fromtimestamp(ts)
                 string_feed_ts = datetime.fromtimestamp(timestamp[0])
                 delta = string_ts - string_feed_ts
                 if delta.days > 0:
                     print("bad data", delta)
                     continue
-                # print("python today timestamp", string_ts)
-                # print("feed today timestamp", string_feed_ts)
 
-
-                # print("Output timestamp....", datetime.fromtimestamp(timestamp[0]))
                 sql_string = """
                 INSERT INTO vehicles VALUES('{id}', '{trip_id}',
                                             '{route_id}', ST_GeomFromText('POINT({lon} {lat})', 4326),

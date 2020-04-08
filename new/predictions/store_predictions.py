@@ -12,6 +12,13 @@ from submit_prediction_data import process_prediction
 import logging
 import random
 
+# from huey import Huey
+# from huey.backends.redis_backend import RedisBlockingQueue
+
+# queue = RedisBlockingQueue('test-queue', host='localhost', port=6379)
+# huey = Huey(queue)
+
+
 
 def increment_token():
     if token_index > 19:
@@ -49,51 +56,36 @@ def get_stops_for_route(cur, stops, route):
     return stops_on_route
 
 
+def read_stops_from_csv(stop_index):
+    stops = []
+    stops_file = open("stops.csv", "r")
+    stops_table = csv.reader(stops_file, delimiter=',')
+    for stops_row in stops_table:
+        stop = Stop(stops_row)
+        stops.append(stop)
+        stop_index = 0
+    return stops 
 
-def loop():
-    stop_index = 0
-    logging.warning("about tot ry")
-    while (truth):
-        try:
-            logging.warning("Made it to try block of loops")
-            predictions = []
-            stop_list = stops
-            stop = random.choice(stop_list)
-            prediction_data = get_prediction_data(stop.stop_id)
-            logging.warning("process to be enqueued")
-            q.enqueue(process_prediction, prediction_data)
-            logging.warning("============LENGTH OF QUEUE====")
-            logging.warning(len(q))
+def cycle_token_and_stop_index(stop_index, token_index, token_list):
+    if (stop_index % 250 == 0):
+        if token_index > 19:
+            token_index = 0
 
+        token = token_list[token_index]
+        token_index += 1
+        
+    if (stop_index == 5291):
+        stop_index = 0
 
-            # stop_list = get_stops_for_route(cur, stops, '72')
-            # for stop in stop_list:
-            #     prediction_data = get_prediction_data(stop.stop_id)
-            #     logging.warning("process to be enqueued")
-            #     q.enqueue(process_prediction, prediction_data)
-            #     logging.warning("============LENGTH OF QUEUE====")
-            #     logging.warning(len(q))
-
-            stop_index += 1
-            if (stop_index % 250 == 0):
-                if token_index > 19:
-                    token_index = 0
-                token = token_list[token_index]
-                token_index += 1
-            if (stop_index == 5291):
-                stop_index = 0
-                # print(stop.stop_id)
-            print("cycled!")
-        except:
-            # sleep(.5)
-            loop()
+    return token, stop_index
 
 if __name__ == '__main__':
     logging.warning("sleeeeping")
-    print("Joia")
     sleep(5)
+
     q = Queue(connection=Redis(host="redis", port=6379))
     q.empty()
+
     token_list = [
         '9A9392AEE88125369B928F281DBD341B',
         '59D69D98A213F47907DCC4666C429F97',
@@ -119,18 +111,66 @@ if __name__ == '__main__':
     ]
 
     token = '9A9392AEE88125369B928F281DBD341B'
+
+    stop_index = 0
     token_index = 0
-    base_url = "https://api.actransit.org/transit/stops/{}/predictions/?token=" + token
+    base_url = "https://api.actransit.org/transit/stops/{}/predictions/?token=" + token_list[token_index]
     cur = get_cur()
 
-    truth = True
-    stops = []
-    stops_file = open("stops.csv", "r")
-    stops_table = csv.reader(stops_file, delimiter=',')
-    for stops_row in stops_table:
-        stop = Stop(stops_row)
-        stops.append(stop)
 
-    print("out of the loop")
+    logging.warning("about tot ry")
 
-    loop()
+    while (True):
+        try:
+            logging.warning("Made it to try block of loops")
+            predictions = []
+
+            stops = read_stops_from_csv(stop_index)
+
+            stop_list = stops
+            stop = random.choice(stop_list)
+
+            prediction_data = get_prediction_data(stop_id=stop.stop_id)
+
+            logging.warning("process to be enqueued")
+            
+            q.enqueue(process_prediction, prediction_data)
+            logging.warning("============LENGTH OF QUEUE====")
+            logging.warning(len(q))
+
+
+
+            stop_index += 1
+
+            ############################
+            # All of this needs to go into the cycle_token_and_stop_index but it throws
+            # error that local variable token is referenced before assignment
+            ############################
+            if (stop_index % 250 == 0):
+                if token_index > 19:
+                    token_index = 0
+
+            token = token_list[token_index]
+            token_index += 1
+        
+            if (stop_index == 5291):
+                stop_index = 0
+            ############################
+            
+            # token, stop_index = cycle_token_and_stop_index(stop_index=stop_index, token_index=token_index, token_list=token_list)
+            
+        except Exception as e:
+            sleep(1)
+            logging.warning("I threw an exception in the loop!")
+            logging.warning(str(e))
+
+
+
+
+# stop_list = get_stops_for_route(cur, stops, '72')
+# for stop in stop_list:
+#     prediction_data = get_prediction_data(stop.stop_id)
+#     logging.warning("process to be enqueued")
+#     q.enqueue(process_prediction, prediction_data)
+#     logging.warning("============LENGTH OF QUEUE====")
+#     logging.warning(len(q))
