@@ -11,7 +11,7 @@ from rq import Queue
 from submit_prediction_data import process_prediction
 import logging
 import random
-
+import json
 # from huey import Huey
 # from huey.backends.redis_backend import RedisBlockingQueue
 
@@ -37,7 +37,8 @@ def get_prediction_data(stop_id):
     else:
 
         predictions = predictions.decode("utf-8")
-        predictions = literal_eval(predictions)
+        # predictions = literal_eval(predictions)
+        predictions = json.loads(predictions)
         for prediction in predictions:
             if type(prediction) != dict:
                 continue
@@ -67,6 +68,7 @@ def read_stops_from_csv(stop_index):
     return stops 
 
 def cycle_token_and_stop_index(stop_index, token_index, token_list):
+    token = None
     if (stop_index % 250 == 0):
         if token_index > 19:
             token_index = 0
@@ -146,18 +148,18 @@ if __name__ == '__main__':
             # All of this needs to go into the cycle_token_and_stop_index but it throws
             # error that local variable token is referenced before assignment
             ############################
-            if (stop_index % 250 == 0):
-                if token_index > 19:
-                    token_index = 0
+            # if (stop_index % 250 == 0):
+            #     if token_index > 19:
+            #         token_index = 0
 
-            token = token_list[token_index]
-            token_index += 1
+            # token = token_list[token_index]
+            # token_index += 1
         
-            if (stop_index == 5291):
-                stop_index = 0
+            # if (stop_index == 5291):
+            #     stop_index = 0
             ############################
             
-            # token, stop_index = cycle_token_and_stop_index(stop_index=stop_index, token_index=token_index, token_list=token_list)
+            token, stop_index = cycle_token_and_stop_index(stop_index=stop_index, token_index=token_index, token_list=token_list)
             
         except Exception as e:
             sleep(1)
