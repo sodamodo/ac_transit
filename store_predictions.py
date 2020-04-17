@@ -56,12 +56,9 @@ def loop():
         try:
             predictions = []
             stop_list = stops
-            # stop_list = get_stops_for_route(cur, stops, '72')
             for stop in stop_list:
                 prediction_data = get_prediction_data(stop.stop_id)
-                # print("weird prediction data??? ", prediction_data)
-
-                # q.enqueue(process_prediction, prediction_data)
+                q.enqueue(process_prediction, prediction_data)
                 # process_prediction(prediction_data)
                 t = threading.Thread(target=process_prediction, args=(prediction_data,))
                 t.start()

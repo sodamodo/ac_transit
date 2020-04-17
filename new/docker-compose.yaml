@@ -1,23 +1,23 @@
 version: '3.2'
 services:
 
-  rq-server:
-    build:
-      dockerfile: Dockerfile
-      context: ./rq-server
-    tty: true
-    links:
-      - "redis"
+  # rq-server:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: ./rq-server
+  #   tty: true
+  #   links:
+  #     - "redis"
 
   
-  rq-worker:
-    build:
-      dockerfile: Dockerfile
-      context: ./rq-worker
-    tty: true
-    links:
-      - "rq-server"
-      - "redis"
+  # rq-worker:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: ./rq-worker
+  #   tty: true
+  #   links:
+  #     - "rq-server"
+  #     - "redis"
   
 
 
@@ -28,7 +28,7 @@ services:
     tty: true
     links:
       - "redis"  
-      - "rq-worker"
+      # - "rq-worker"
   
   redis:
     image: redis

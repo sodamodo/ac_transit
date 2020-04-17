@@ -14,7 +14,8 @@ import random
 import json
 
 
-
+from huey import RedisHuey
+huey = RedisHuey('predictor', host='redis')
 
 class Predictor:
     def __init__(self):
@@ -44,11 +45,51 @@ class Predictor:
         self.stop_index = 0
         self.token_index = 0
         self.url = "https://api.actransit.org/transit/stops/{}/predictions/?token=" + self.token_list[self.token_index]
-
-        # self.q = Queue(connection=Redis(host="redis", port=6379))
-        # self.q.empty()
         self.cur = get_cur()
 
+    
+
+    @huey.task()
+    def process_prediction(self, prediction_data):
+
+        logging.warning("=======ARE YOU EVEN WORKING??=====")
+        cur = get_cur()
+        predictions = []
+        if prediction_data == None:
+            pass
+        else:
+            if type(prediction_data == list):
+                try:
+                    for prediction in prediction_data:
+                        # # print("type of prediction list...", type(prediction))
+                        predictions.append(Prediction(prediction))
+                except:
+                    pass
+
+
+
+        for prediction in predictions:
+            predicted_departure_dt = datetime.strptime(prediction.predicted_departure, "%Y-%m-%dT%H:%M:%S")
+            prediction_datetime_dt = datetime.strptime(prediction.prediction_datetime, "%Y-%m-%dT%H:%M:%S")
+            delta = predicted_departure_dt - prediction_datetime_dt
+            if (delta.seconds > 600):
+                continue
+
+
+
+            sql_string=  """
+            INSERT INTO predictions VALUES ('{stop_id}', '{trip_id}', '{vehicle_id}', '{route_name}', '{predicted_delay}',
+                                            '{predicted_departure}', '{prediction_datetime}');
+            """.format(
+                stop_id=prediction.stop_id,
+                trip_id=prediction.trip_id,
+                vehicle_id=prediction.vehicle_id,
+                route_name=prediction.route_name,
+                predicted_delay=prediction.predicted_delay,
+                predicted_departure=prediction.predicted_departure,
+                prediction_datetime=prediction.prediction_datetime
+            )
+            cur.execute(sql_string)
 
     def get_prediction_data(self, stop_id):
         r = requests.get(self.url.format(stop_id))
@@ -80,13 +121,13 @@ class Predictor:
             stops.append(stop)
         return stops 
 
-    def cycle_token_and_stop_index():
+    def cycle_token_and_stop_index(self):
         token = None
-        if (stop_index % 250 == 0):
+        if (self.stop_index % 250 == 0):
             if self.token_index > 19:
                 self.token_index = 0
 
-            token = token_list[self.self.token_index]
+            token = self.token_list[self.token_index]
             self.token_index += 1
             
         if (self.stop_index == 5291):
@@ -97,12 +138,15 @@ class Predictor:
 
 if __name__ == '__main__':
 
+    
+
+
     logging.warning("sleeeeping")
     sleep(5)
     predictor = Predictor()
 
-    q = Queue(connection=Redis(host="redis", port=6379))
-    q.empty()
+    # q = Queue(connection=Redis(host="redis", port=6379))
+    # q.empty()
 
 
     while (True):
@@ -110,28 +154,25 @@ if __name__ == '__main__':
             logging.warning("Made it to try block of loops WUMPPPPX")
             predictions = []
 
-            #### Plopping the method logic to see whats uppp
             stops = predictor.read_stops_from_csv()
-            ###########
 
-            # stops = []
-            # stops_file = open("stops.csv", "r")
-            # stops_table = csv.reader(stops_file, delimiter=',')
-            # for stops_row in stops_table:
-            #     stop = Stop(stops_row)
-            #     stops.append(stop)
+
 
             stop_list = stops
             stop = random.choice(stop_list)
 
+            logging.warning("======GET PREDICTION DATA======")
             prediction_data = predictor.get_prediction_data(stop_id=stop.stop_id)
 
             logging.warning("process to be enqueued")
             
-            q.enqueue(process_prediction, prediction_data)
-            logging.warning("============LENGTH OF QUEUE====")
-            logging.warning(len(q))
+            logging.warning("======PROCESS PREDICTION======")
+            predictor.process_prediction(prediction_data)
+            # q.enqueue(process_prediction, prediction_data)
+            # logging.warning("============LENGTH OF QUEUE====")
 
+            # logging.warning("=====RIGHT BEFORE STOP INDEX......now show it!======")
+            # logging.warning(predictor.stop_index)
             predictor.stop_index += 1
             
             token = predictor.cycle_token_and_stop_index()
