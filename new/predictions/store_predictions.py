@@ -6,16 +6,16 @@ import csv
 from models import Stop, Prediction
 from ast import literal_eval
 from time import sleep
-from redis import Redis
-from rq import Queue
+# from redis import Redis
+# from rq import Queue
 from submit_prediction_data import process_prediction
 import logging
 import random
 import json
+from datetime import datetime
 
-
-from huey import RedisHuey
-huey = RedisHuey('predictor', host='redis')
+# from huey import RedisHuey
+# huey = RedisHuey('predictor', host='redis')
 
 class Predictor:
     def __init__(self):
@@ -49,7 +49,7 @@ class Predictor:
 
     
 
-    @huey.task()
+    # @huey.task()
     def process_prediction(self, prediction_data):
 
         logging.warning("=======ARE YOU EVEN WORKING??=====")
@@ -66,20 +66,25 @@ class Predictor:
                 except:
                     pass
 
+        if len(predictions) < 0:
+            return None
+        sql_template = 'INSERT INTO predictions VALUES '
+        value_string = ''
 
+        # logging.warning("=======PREDS IN PROCESS PREDICTION METHOD=====")
+        # logging.warning(predictions)
 
         for prediction in predictions:
             predicted_departure_dt = datetime.strptime(prediction.predicted_departure, "%Y-%m-%dT%H:%M:%S")
             prediction_datetime_dt = datetime.strptime(prediction.prediction_datetime, "%Y-%m-%dT%H:%M:%S")
             delta = predicted_departure_dt - prediction_datetime_dt
             if (delta.seconds > 600):
+                logging.warning("=====BAD TIMING DATA=====")
                 continue
 
-
-
-            sql_string=  """
-            INSERT INTO predictions VALUES ('{stop_id}', '{trip_id}', '{vehicle_id}', '{route_name}', '{predicted_delay}',
-                                            '{predicted_departure}', '{prediction_datetime}');
+            sql_string_component = """
+             ('{stop_id}', '{trip_id}', '{vehicle_id}', '{route_name}', '{predicted_delay}',
+                                            '{predicted_departure}', '{prediction_datetime}'),
             """.format(
                 stop_id=prediction.stop_id,
                 trip_id=prediction.trip_id,
@@ -89,7 +94,57 @@ class Predictor:
                 predicted_departure=prediction.predicted_departure,
                 prediction_datetime=prediction.prediction_datetime
             )
-            cur.execute(sql_string)
+            logging.warning("======HERE IS SQL COMPONENT FOR EACH PREDICTION=======")
+            logging.warning(sql_string_component)
+            value_string += sql_string_component
+
+
+        # value_string = value_string[:-2]
+        logging.warning("=====HERE IS THE STRING WITH ALL VALUES======")
+        logging.warning(value_string)
+
+        final_sql_string = sql_template + value_string
+        
+        logging.warning("======HERE IS FINAL STRING=====")
+        logging.warning(final_sql_string)
+
+        final_sql_string = final_sql_string[:-1]
+        logging.warning("======POST TRIM STRING =====")
+        logging.warning(len(final_sql_string))
+
+        
+        # final_sql_string.rstrip()
+
+        # logging.warning("======POST STRIP LEN=====")
+        # logging.warning(len(final_sql_string))
+
+        # logging.warning("======PRE SLIICE LEN=====")
+        # logging.warning(len(final_sql_string))
+        # logging.warning(final_sql_string)
+
+        # final_sql_string = final_sql_string[:-1]
+        
+        # logging.warning("======POST SLIICE LEN=====")
+        # logging.warning(len(final_sql_string))
+        # logging.warning(final_sql_string)
+
+        
+        # logging.warning("======HERE IS FINAL STRING POST SWAPS=====")
+        # logging.warning(final_sql_string)
+        # cur.execute(final_sql_string)
+            # sql_string=  """
+            # INSERT INTO predictions VALUES ('{stop_id}', '{trip_id}', '{vehicle_id}', '{route_name}', '{predicted_delay}',
+            #                                 '{predicted_departure}', '{prediction_datetime}');
+            # """.format(
+            #     stop_id=prediction.stop_id,
+            #     trip_id=prediction.trip_id,
+            #     vehicle_id=prediction.vehicle_id,
+            #     route_name=prediction.route_name,
+            #     predicted_delay=prediction.predicted_delay,
+            #     predicted_departure=prediction.predicted_departure,
+            #     prediction_datetime=prediction.prediction_datetime
+            # )
+            # cur.execute(sql_string)
 
     def get_prediction_data(self, stop_id):
         r = requests.get(self.url.format(stop_id))
@@ -151,7 +206,7 @@ if __name__ == '__main__':
 
     while (True):
         try:
-            logging.warning("Made it to try block of loops WUMPPPPX")
+            # logging.warning("Made it to try block of loops WUMPPPPX")
             predictions = []
 
             stops = predictor.read_stops_from_csv()
@@ -161,13 +216,25 @@ if __name__ == '__main__':
             stop_list = stops
             stop = random.choice(stop_list)
 
-            logging.warning("======GET PREDICTION DATA======")
-            prediction_data = predictor.get_prediction_data(stop_id=stop.stop_id)
-
-            logging.warning("process to be enqueued")
             
-            logging.warning("======PROCESS PREDICTION======")
-            predictor.process_prediction(prediction_data)
+
+            # logging.warning("======GET PREDICTION DATA======")
+            prediction_data = predictor.get_prediction_data(stop_id=stop.stop_id)
+            # prediction_data = predictor.get_prediction_data(stop_id=55811)
+
+            # logging.warning("process to be enqueued")
+            
+            # logging.warning("======PROCESS PREDICTION======")
+            # logging.warning("======PRE DATA LENGTH======")
+            # logging.warning(len(prediction_data))
+
+            # logging.warning("======DATA TO BE PROCESSED======")
+            # logging.warning(prediction_data)
+
+            if len(prediction_data) > 0:
+                predictor.process_prediction(prediction_data[:10])
+
+
             # q.enqueue(process_prediction, prediction_data)
             # logging.warning("============LENGTH OF QUEUE====")
 
