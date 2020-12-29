@@ -1,7 +1,7 @@
-# from sqlalchemy import Column, ForeignKey, Integer, String
-# from sqlalchemy.ext.declarative import declarative_base
-# from sqlalchemy.orm import relationship
-# from sqlalchemy import create_engine
+from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+from sqlalchemy import create_engine
 import psycopg2
 
 def get_cur():
@@ -10,11 +10,15 @@ def get_cur():
     cur = conn.cursor()
     return cur
 
-# Base = declarative_base()
+Base = declarative_base()
 
 
-# class Routes(Base):
-#     __tablename__ = 'routes'
-#     route_id = Column(String(10))
+class Predictions(Base):
+    __tablename__ = 'predictions'
+    stop_id = Column(Integer)
+    trip_id = Column(Integer)
+    vehicle_id = Column(Integer)
+    route_name = Column(String)
+    predicted_delay
 
-# engine = create_engine('postgresql://postgres:transit@35.188.80.87/postgres')
+engine = create_engine('postgresql://thebuspass:transit@busdb.c3ohfvdvxlpf.us-east-2.rds.amazonaws.com/busdb')
