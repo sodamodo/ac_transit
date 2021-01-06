@@ -1,4 +1,5 @@
-from database import get_cur
+from database import engine, Predictions as sql_Predictions
+from sqlalchemy.orm import sessionmaker
 import requests
 import random
 from time import sleep
@@ -45,15 +46,13 @@ class Predictor:
         self.stop_index = 0
         self.token_index = 0
         self.url = "https://api.actransit.org/transit/stops/{}/predictions/?token=" + self.token_list[self.token_index]
-        self.cur = get_cur()
 
-    
 
     # @huey.task()
     def process_prediction(self, prediction_data):
 
-        logging.warning("=======ARE YOU EVEN WORKING??=====")
-        cur = get_cur()
+        session = Session()
+
         predictions = []
         if prediction_data == None:
             pass
@@ -66,13 +65,7 @@ class Predictor:
                 except:
                     pass
 
-        if len(predictions) < 0:
-            return None
-        sql_template = 'INSERT INTO predictions VALUES '
-        value_string = ''
 
-        # logging.warning("=======PREDS IN PROCESS PREDICTION METHOD=====")
-        # logging.warning(predictions)
 
         for prediction in predictions:
             predicted_departure_dt = datetime.strptime(prediction.predicted_departure, "%Y-%m-%dT%H:%M:%S")
@@ -82,70 +75,29 @@ class Predictor:
                 logging.warning("=====BAD TIMING DATA=====")
                 continue
 
-            sql_string_component = """
-             ('{stop_id}', '{trip_id}', '{vehicle_id}', '{route_name}', '{predicted_delay}',
-                                            '{predicted_departure}', '{prediction_datetime}'),
-            """.format(
-                stop_id=prediction.stop_id,
-                trip_id=prediction.trip_id,
-                vehicle_id=prediction.vehicle_id,
-                route_name=prediction.route_name,
-                predicted_delay=prediction.predicted_delay,
-                predicted_departure=prediction.predicted_departure,
-                prediction_datetime=prediction.prediction_datetime
+        
+        logging.warning("===Made it to has predictions====")
+        logging.warning("===I has this many predictions====")
+        logging.warning(len(predictions))
+        sql_predictions = []
+
+        for prediction in predictions:
+            sql_predictions.append(
+                sql_Predictions(
+                    stop_id=prediction.stop_id,
+                    trip_id=prediction.trip_id,
+                    vehicle_id=prediction.vehicle_id,
+                    route_name=prediction.route_name,
+                    predicted_delay=prediction.route_name,
+                    predicted_departure=prediction.predicted_departure,
+                    prediction_datetime=prediction.prediction_datetime
+
+                )
             )
-            logging.warning("======HERE IS SQL COMPONENT FOR EACH PREDICTION=======")
-            logging.warning(sql_string_component)
-            value_string += sql_string_component
-
-
-        # value_string = value_string[:-2]
-        logging.warning("=====HERE IS THE STRING WITH ALL VALUES======")
-        logging.warning(value_string)
-
-        final_sql_string = sql_template + value_string
         
-        logging.warning("======HERE IS FINAL STRING=====")
-        logging.warning(final_sql_string)
-
-        final_sql_string = final_sql_string[:-1]
-        logging.warning("======POST TRIM STRING =====")
-        logging.warning(len(final_sql_string))
-
+        session.add_all(sql_predictions)
+        session.commit()
         
-        # final_sql_string.rstrip()
-
-        # logging.warning("======POST STRIP LEN=====")
-        # logging.warning(len(final_sql_string))
-
-        # logging.warning("======PRE SLIICE LEN=====")
-        # logging.warning(len(final_sql_string))
-        # logging.warning(final_sql_string)
-
-        # final_sql_string = final_sql_string[:-1]
-        
-        # logging.warning("======POST SLIICE LEN=====")
-        # logging.warning(len(final_sql_string))
-        # logging.warning(final_sql_string)
-
-        
-        # logging.warning("======HERE IS FINAL STRING POST SWAPS=====")
-        # logging.warning(final_sql_string)
-        # cur.execute(final_sql_string)
-            # sql_string=  """
-            # INSERT INTO predictions VALUES ('{stop_id}', '{trip_id}', '{vehicle_id}', '{route_name}', '{predicted_delay}',
-            #                                 '{predicted_departure}', '{prediction_datetime}');
-            # """.format(
-            #     stop_id=prediction.stop_id,
-            #     trip_id=prediction.trip_id,
-            #     vehicle_id=prediction.vehicle_id,
-            #     route_name=prediction.route_name,
-            #     predicted_delay=prediction.predicted_delay,
-            #     predicted_departure=prediction.predicted_departure,
-            #     prediction_datetime=prediction.prediction_datetime
-            # )
-            # cur.execute(sql_string)
-
     def get_prediction_data(self, stop_id):
         r = requests.get(self.url.format(stop_id))
         prediction_list = []
@@ -199,9 +151,9 @@ if __name__ == '__main__':
     logging.warning("sleeeeping")
     sleep(5)
     predictor = Predictor()
-
-    # q = Queue(connection=Redis(host="redis", port=6379))
-    # q.empty()
+    
+    Session = sessionmaker()
+    Session.configure(bind=engine)
 
 
     while (True):
@@ -217,8 +169,6 @@ if __name__ == '__main__':
             stop = random.choice(stop_list)
 
             
-
-            # logging.warning("======GET PREDICTION DATA======")
             prediction_data = predictor.get_prediction_data(stop_id=stop.stop_id)
             # prediction_data = predictor.get_prediction_data(stop_id=55811)
 
