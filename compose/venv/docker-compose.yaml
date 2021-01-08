@@ -1,0 +1,52 @@
+version: '3.2'
+services:
+
+  predictions:
+    build:
+      dockerfile: Dockerfile
+      context: ./predictions
+    tty: true
+
+  locations:
+    build:
+      dockerfile: Dockerfile
+      context: ./locations
+    tty: true
+
+  # rq-server:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: ./rq-server
+  #   tty: true
+  #   links:
+  #     - "redis"
+
+  
+  # rq-worker:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: ./rq-worker
+  #   tty: true
+  #   links:
+  #     - "rq-server"
+  #     - "redis"
+  
+
+
+
+
+  
+  # redis:
+  #   image: redis
+  #   ports:
+  #     - "6379"
+
+  # dashboard:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: ./dashboard
+  #   tty: true
+
+
+
+

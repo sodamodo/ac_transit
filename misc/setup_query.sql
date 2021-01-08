@@ -2,6 +2,7 @@
 
 CREATE TABLE public.predictions
 (
+  id SERIAL PRIMARY KEY
   stop_id integer,
   trip_id integer,
   vehicle_id integer,
