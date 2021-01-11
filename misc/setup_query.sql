@@ -14,15 +14,17 @@ CREATE TABLE public.predictions
 DROP TABLE IF EXISTS vehicles;
 CREATE TABLE public.vehicles
 (
-  id int NOT NULL,
+  id SERIAL PRIMARY KEY,
   trip_id VARCHAR,
   route_name character varying,
+  stop_id integer,
   loc geometry(Point,4326),
   bearing character varying,
   speed character varying,
   vehicle_timestamp timestamp without time zone,
   vehicle_id VARCHAR
 );
+
 
 DROP TABLE IF EXISTS stoppedvehicles;
 CREATE TABLE public.stoppedvehicles

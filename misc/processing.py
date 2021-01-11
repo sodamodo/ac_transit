@@ -7,7 +7,7 @@ import re
 import json
 import csv
 from collections import defaultdict
-from geopy.distance import vincenty
+from geopy.distance import geodesic
 from shapely import wkb
 
 cur = get_cur()
@@ -21,7 +21,7 @@ for stops_row in stops_table:
 
 #This gets all the vehicles and puts them into an array of objects.
 def populate_vehicles(cur):
-    cur.execute("SELECT * FROM vehiclesubset LIMIT 1000;")
+    cur.execute("SELECT * FROM vehicles LIMIT 1000;")
     vehicles = []
     vehicles_table = cur.fetchall()
     for vehicles_row in vehicles_table:
@@ -46,7 +46,7 @@ def get_distance_from_stop(cur, vehicle, stop):
 
     vehicle_point = wkb.loads(vehicle.loc, hex=True)
     stop_point = wkb.loads(stop.geom, hex=True)
-    distance = vincenty((vehicle_point.y, vehicle_point.x), (stop_point.y, stop_point.x)).m
+    distance = geodesic((vehicle_point.y, vehicle_point.x), (stop_point.y, stop_point.x)).m
     return distance
 
 def get_closest_stop_on_route(vehicle):
