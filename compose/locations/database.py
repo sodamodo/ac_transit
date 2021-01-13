@@ -10,11 +10,22 @@ def get_cur():
     cur = conn.cursor()
     return cur
 
-# Base = declarative_base()
+Base = declarative_base()
 
 
-# class Routes(Base):
-#     __tablename__ = 'routes'
-#     route_id = Column(String(10))
+class Vechicles(Base):
+    __tablename__ = 'predictions'
+    pk = Column(Integer)
+    id = Column(Integer)
+    trip_id = Column(Integer)
+    route_name = Column(String)
+    stop_id = Column(Integer)
+    loc = Column(String)
+    bearing = Column(String)
+    speed = Column(String)
+    vechicle_timestamp = Column(String)
+    vehicle_id = Column(String)
 
-# engine = create_engine('postgresql://postgres:transit@35.188.80.87/postgres')
+
+engine = create_engine('postgresql://bususer:thebuspass@busdb.c3ohfvdvxlpf.us-east-2.rds.amazonaws.com/busdb')
+

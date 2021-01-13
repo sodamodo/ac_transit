@@ -81,7 +81,7 @@ limiter = 0
 counter = 0
 for vehicle in vehicles:
     # print("stop check called!")
-    # if vehicle.speed == "0.0":
+    # if vehicle.speed == "0.0"
     #     stop_dist_dict = get_closest_stop_on_route(vehicle)
     #
     #     if len(stop_dist_dict[vehicle].items()) == 0:
