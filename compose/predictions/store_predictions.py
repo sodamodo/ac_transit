@@ -65,7 +65,7 @@ class Predictor:
                 except:
                     pass
 
-
+        
 
         for prediction in predictions:
             predicted_departure_dt = datetime.strptime(prediction.predicted_departure, "%Y-%m-%dT%H:%M:%S")
@@ -75,10 +75,12 @@ class Predictor:
                 logging.warning("=====BAD TIMING DATA=====")
                 continue
 
+
+
         
-        logging.warning("===Made it to has predictions====")
-        logging.warning("===I has this many predictions====")
-        logging.warning(len(predictions))
+        # logging.warning("===Made it to has predictions====")
+        # logging.warning("===I has this many predictions====")
+        # logging.warning(len(predictions))
         sql_predictions = []
 
         for prediction in predictions:
@@ -88,7 +90,7 @@ class Predictor:
                     trip_id=prediction.trip_id,
                     vehicle_id=prediction.vehicle_id,
                     route_name=prediction.route_name,
-                    predicted_delay=prediction.route_name,
+                    predicted_delay=prediction.predicted_delay,
                     predicted_departure=prediction.predicted_departure,
                     prediction_datetime=prediction.prediction_datetime
 
@@ -102,6 +104,7 @@ class Predictor:
         r = requests.get(self.url.format(stop_id))
         prediction_list = []
         predictions = r.content
+
 
         if r.status_code == '404' or r.content == b'':
             return None
@@ -196,6 +199,6 @@ if __name__ == '__main__':
             
         except Exception as e:
             sleep(1)
-            logging.warning("I threw an exception in the loop!")
-            logging.warning(str(e))
+            # logging.warning("I threw an exception in the loop!")
+            # logging.warning(str(e))
 

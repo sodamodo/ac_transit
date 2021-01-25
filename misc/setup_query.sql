@@ -23,7 +23,7 @@ CREATE TABLE vehicles
   trip_id VARCHAR,
   route_name character varying,
   schedule_relationship VARCHAR,
-  stop_id integer,
+  stop_id VARCHAR,
   loc geometry(Point,4326),
   lat VARCHAR,
   lon VARCHAR,

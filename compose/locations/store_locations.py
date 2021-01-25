@@ -89,6 +89,7 @@ def loop():
                     current_stop_sequence = current_stop_sequence,
                     current_status = current_status,
                     occupancy_status = occupancy_status,
+                    schedule_relationship = schedule_relationship
                 )
            
                 try:
@@ -119,7 +120,7 @@ if __name__ == '__main__':
     # print("in insertion try block")
     # session.add(test_vehicle)
     # session.commit() 
-    # sleep(3)
+    # sleep(3)..
 
 
 # logging.warning("ping?")
